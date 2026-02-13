@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nurzhol1-6</title>
+    <style>
+        body {
+            background: #f5f7fa;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #1e293b;
+        }
+        h1 {
+            font-size: 1.8rem;
+            border-bottom: 3px solid #2563eb;
+            display: inline-block;
+            padding-bottom: 6px;
+            margin-top: 0;
+        }
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.2rem 1.4rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,20,50,0.05);
+            border: 1px solid #e9eef2;
+            transition: 0.1s;
+        }
+        .card h2 {
+            font-size: 1.3rem;
+            margin-top: 0.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #0f172a;
+        }
+        .card h2 span {
+            background: #2563eb10;
+            font-size: 0.9rem;
+            padding: 4px 10px;
+            border-radius: 30px;
+            color: #2563eb;
+            font-weight: 500;
+            margin-left: auto;
+        }
+        hr {
+            border: none;
+            border-top: 1px dashed #cbd5e1;
+            margin: 15px 0;
+        }
+        input, button, textarea {
+            font: inherit;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            outline: none;
+            background: white;
+            transition: 0.15s;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            width: auto;
+            min-width: 120px;
+            box-shadow: 0 4px 8px #2563eb30;
+            transition: 0.1s;
+        }
+        button.small {
+            min-width: 80px;
+            padding: 6px 12px;
+        }
+        button:hover {
+            background: #1d4ed8;
+            transform: scale(0.98);
+        }
+        .output {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 12px 16px;
+            border: 1px solid #dee4eb;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            margin: 12px 0 4px;
+            word-break: break-word;
+        }
+        .flex-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .checkbox-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 10px 0;
+            background: #f1f5f9;
+            border-radius: 16px;
+            overflow: hidden;
+            width: 100%;
+        }
+        td {
+            padding: 6px 8px;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+        }
+        .diag {
+            background: #fbbf24 !important;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .strength {
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 40px;
+            background: #e2e8f0;
+            display: inline-block;
+        }
+        .strength.weak { background: #fecaca; color: #7f1d1d; }
+        .strength.medium { background: #fed7aa; color: #7b341e; }
+        .strength.strong { background: #bbf7d0; color: #14532d; }
+        footer {
+            text-align: center;
+            color: #64748b;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚙️ Шесть заданий (сумма, палиндром, RLE, таблица, пароль, сортировка)</h1>
+    <div class="task-grid">
+
+        <!-- 1. Умная сумма -->
+        <div class="card">
+            <h2>🧮 1. Умная сумма <span>строка</span></h2>
+            <div class="flex-row">
+                <input type="text" id="sumInput" value="10 20 abc 5 -3 2.5" placeholder="числа и текст">
+                <button id="calcSumBtn">→ сумма</button>
+            </div>
+            <div id="sumOutput" class="output">сумма: 34.5 | кол-во: 5 | среднее: 6.9</div>
+            <small>Суммирует целые и дробные (через точку).</small>
+        </div>
+
+        <!-- 2. Палиндром -->
+        <div class="card">
+            <h2>🔁 2. Палиндром <span>фраза</span></h2>
+            <div class="flex-row">
+                <input type="text" id="palInput" value="А роза упала на лапу Азора" placeholder="фраза">
+                <button id="checkPalBtn">проверить</button>
+            </div>
+            <div id="palOutput" class="output">✅ да, это палиндром</div>
+            <small>Игнорирует пробелы и регистр.</small>
+        </div>
+
+        <!-- 3. RLE сжатие + обратно -->
+        <div class="card">
+            <h2>🗜️ 3. RLE (сжатие/восстановление)</h2>
+            <div class="flex-row">
+                <input type="text" id="rleInput" value="aaabcccc" placeholder="например aaabcccc">
+                <button id="compressBtn">сжать →</button>
+                <button id="decompressBtn" class="small">расшифровать</button>
+            </div>
+            <div id="rleOutput" class="output">a3b1c4</div>
+            <small>Сжатие: aaabcccc → a3b1c4. Восстанавливает обратно.</small>
+        </div>
+
+        <!-- 4. Таблица умножения N×N + диагональ -->
+        <div class="card">
+            <h2>✖️ 4. Таблица N×N <span>диагональ</span></h2>
+            <div class="flex-row">
+                <input type="number" id="tableSize" value="6" min="2" max="12" step="1">
+                <button id="genTableBtn">сгенерировать</button>
+            </div>
+            <div id="tableContainer" class="output" style="padding: 0; background: transparent;"></div>
+        </div>
+
+        <!-- 5. Генератор пароля + сила -->
+        <div class="card">
+            <h2>🔐 5. Пароль <span>сила</span></h2>
+            <div class="flex-row">
+                <input type="number" id="passLen" value="10" min="8" max="24" style="width: 80px;">
+                <span style="margin-left: 0;">длина</span>
+            </div>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="useDigits" checked> цифры</label>
+                <label><input type="checkbox" id="useSymbols" checked> символы</label>
+                <label><input type="checkbox" id="useUpper" checked> заглавные</label>
+            </div>
+            <div class="flex-row">
+                <button id="genPassBtn">сгенерировать</button>
+                <span id="strengthBadge" class="strength strong">сильный</span>
+            </div>
+            <div id="passOutput" class="output">Zg3$kL9*xQ</div>
+            <small>8-24 символа, оценка: слабый/средний/сильный.</small>
+        </div>
+
+        <!-- 6. Сортировка пузырьком / выбором + сравнение времени -->
+        <div class="card">
+            <h2>🔄 6. Сортировка без sort() <span>1000 эл.</span></h2>
+            <div class="flex-row">
+                <button id="bubbleBtn">пузырёк</button>
+                <button id="selectionBtn">выбором</button>
+                <button id="genArrayBtn">новый массив</button>
+            </div>
+            <div id="sortInfo" class="output" style="font-size:0.85rem;">массив из 1000 элементов сгенерирован</div>
+            <div id="bubbleTime" class="output" style="margin-top:6px;">⏱️ пузырёк: —</div>
+            <div id="selectionTime" class="output">⏱️ выбор: —</div>
+        </div>
+    </div>
+
+    <footer>⚡ каждое поле независимо — результаты обновляются в реальном времени</footer>
+
+    <script>
+        (function() {
+            // ---------- 1. Умная сумма ----------
+            const sumInput = document.getElementById('sumInput');
+            const calcSumBtn = document.getElementById('calcSumBtn');
+            const sumOutput = document.getElementById('sumOutput');
+
+            function updateSum() {
+                const str = sumInput.value.trim();
+                const tokens = str.split(/\s+/);
+                let sum = 0;
+                let count = 0;
+                for (let token of tokens) {
+                    if (token === '') continue;
+                    let num = parseFloat(token);
+                    if (!isNaN(num) && isFinite(num)) {
+                        sum += num;
+                        count++;
+                    }
+                }
+                let avg = count ? (sum / count) : 0;
+                sumOutput.innerText = `сумма: ${sum} | кол-во: ${count} | среднее: ${avg.toFixed(2)}`;
+            }
+            calcSumBtn.addEventListener('click', updateSum);
+            updateSum(); // initial
+
+            // ---------- 2. Палиндром ----------
+            const palInput = document.getElementById('palInput');
+            const checkPalBtn = document.getElementById('checkPalBtn');
+            const palOutput = document.getElementById('palOutput');
+
+            function checkPalindrome() {
+                let raw = palInput.value;
+                let cleaned = raw.replace(/\s+/g, '').toLowerCase();
+                let reversed = cleaned.split('').reverse().join('');
+                if (cleaned === reversed && cleaned.length > 0) {
+                    palOutput.innerText = '✅ да, это палиндром';
+                } else if (cleaned.length === 0) {
+                    palOutput.innerText = '⚠️ пустая строка';
+                } else {
+                    palOutput.innerText = '❌ нет, не палиндром';
+                }
+            }
+            checkPalBtn.addEventListener('click', checkPalindrome);
+            checkPalindrome();
+
+            // ---------- 3. RLE (сжатие/декомпрессия) ----------
+            const rleInput = document.getElementById('rleInput');
+            const compressBtn = document.getElementById('compressBtn');
+            const decompressBtn = document.getElementById('decompressBtn');
+            const rleOutput = document.getElementById('rleOutput');
+
+            function rleCompress(str) {
+                if (!str) return '';
+                let result = '';
+                let count = 1;
+                for (let i = 0; i < str.length; i++) {
+                    if (i + 1 < str.length && str[i] === str[i+1]) {
+                        count++;
+                    } else {
+                        result += str[i] + count;
+                        count = 1;
+                    }
+                }
+                return result;
+            }
+
+            function rleDecompress(comp) {
+                // ожидается формат буква + число, число может быть многозначным
+                let result = '';
+                let i = 0;
+                while (i < comp.length) {
+                    let char = comp[i];
+                    i++;
+                    let numStr = '';
+                    while (i < comp.length && !isNaN(parseInt(comp[i], 10))) {
+                        numStr += comp[i];
+                        i++;
+                    }
+                    let count = numStr ? parseInt(numStr, 10) : 1;
+                    result += char.repeat(count);
+                }
+                return result;
+            }
+
+            compressBtn.addEventListener('click', () => {
+                rleOutput.innerText = rleCompress(rleInput.value);
+            });
+            decompressBtn.addEventListener('click', () => {
+                rleOutput.innerText = rleDecompress(rleInput.value);
+            });
+            // initial
+            rleOutput.innerText = rleCompress(rleInput.value);
+
+            // ---------- 4. Таблица умножения ----------
+            const tableSize = document.getElementById('tableSize');
+            const genTableBtn = document.getElementById('genTableBtn');
+            const tableContainer = document.getElementById('tableContainer');
+
+            function renderTable(n) {
+                n = parseInt(n, 10);
+                if (isNaN(n) || n < 2) n = 2;
+                if (n > 12) n = 12;
+                let html = '<table><tbody>';
+                for (let i = 1; i <= n; i++) {
+                    html += '<tr>';
+                    for (let j = 1; j <= n; j++) {
+                        let val = i * j;
+                        let diagClass = (i === j) ? 'diag' : '';
+                        html += `<td class="${diagClass}">${val}</td>`;
+                    }
+                    html += '</tr>';
+                }
+                html += '</tbody></table>';
+                tableContainer.innerHTML = html;
+            }
+            genTableBtn.addEventListener('click', () => renderTable(tableSize.value));
+            renderTable(tableSize.value);
+
+            // ---------- 5. Генератор пароля и сила ----------
+            const passLen = document.getElementById('passLen');
+            const useDigits = document.getElementById('useDigits');
+            const useSymbols = document.getElementById('useSymbols');
+            const useUpper = document.getElementById('useUpper');
+            const genPassBtn = document.getElementById('genPassBtn');
+            const passOutput = document.getElementById('passOutput');
+            const strengthBadge = document.getElementById('strengthBadge');
+
+            function randomChar(type) {
+                const lower = 'abcdefghijklmnopqrstuvwxyz';
+                const digits = '0123456789';
+                const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+                const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                let pool = lower;
+                if (type.digits) pool += digits;
+                if (type.symbols) pool += symbols;
+                if (type.upper) pool += upper;
+                if (pool.length === 0) pool = lower; // fallback
+                return pool[Math.floor(Math.random() * pool.length)];
+            }
+
+            function generatePassword() {
+                let len = parseInt(passLen.value, 10);
+                if (isNaN(len)) len = 10;
+                len = Math.min(24, Math.max(8, len));
+
+                const options = {
+                    digits: useDigits.checked,
+                    symbols: useSymbols.checked,
+                    upper: useUpper.checked
+                };
+                // гарантируем хотя бы один символ из каждой выбранной категории
+                let forced = [];
+                if (options.digits) forced.push('0123456789'[Math.floor(Math.random()*10)]);
+                if (options.symbols) forced.push('!@#$%&*?'[Math.floor(Math.random()*8)]);
+                if (options.upper) forced.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*26)]);
+
+                let pass = '';
+                // заполняем до нужной длины случайными из объединённого набора
+                for (let i = 0; i < len - forced.length; i++) {
+                    pass += randomChar(options);
+                }
+                // вставляем forced символы на случайные позиции
+                for (let ch of forced) {
+                    let pos = Math.floor(Math.random() * (pass.length + 1));
+                    pass = pass.slice(0, pos) + ch + pass.slice(pos);
+                }
+                return pass;
+            }
+
+            function evaluateStrength(pwd) {
+                let hasLower = /[a-z]/.test(pwd);
+                let hasUpper = /[A-Z]/.test(pwd);
+                let hasDigit = /[0-9]/.test(pwd);
+                let hasSymbol = /[^a-zA-Z0-9]/.test(pwd);
+                let len = pwd.length;
+                let variety = (hasLower?1:0) + (hasUpper?1:0) + (hasDigit?1:0) + (hasSymbol?1:0);
+                if (len >= 10 && variety >= 3) return 'strong';
+                if (len >= 8 && variety >= 2) return 'medium';
+                return 'weak';
+            }
+
+            function updatePassword() {
+                let pwd = generatePassword();
+                passOutput.innerText = pwd;
+                let strength = evaluateStrength(pwd);
+                strengthBadge.innerText = {
+                    'weak': 'слабый',
+                    'medium': 'средний',
+                    'strong': 'сильный'
+                }[strength];
+                strengthBadge.className = 'strength ' + strength;
+            }
+            genPassBtn.addEventListener('click', updatePassword);
+            updatePassword();
+
+            // ---------- 6. Сортировка пузырьком / выбором + тайминг ----------
+            const bubbleBtn = document.getElementById('bubbleBtn');
+            const selectionBtn = document.getElementById('selectionBtn');
+            const genArrayBtn = document.getElementById('genArrayBtn');
+            const bubbleTimeDiv = document.getElementById('bubbleTime');
+            const selectionTimeDiv = document.getElementById('selectionTime');
+            const sortInfo = document.getElementById('sortInfo');
+
+            let currentArray = [];
+
+            function generateRandomArray(size = 1000) {
+                let arr = [];
+                for (let i = 0; i < size; i++) {
+                    arr.push(Math.floor(Math.random() * 10000));
+                }
+                return arr;
+            }
+
+            function bubbleSort(arr) {
+                let a = [...arr];
+                let n = a.length;
+                for (let i = 0; i < n-1; i++) {
+                    for (let j = 0; j < n-i-1; j++) {
+                        if (a[j] > a[j+1]) {
+                            [a[j], a[j+1]] = [a[j+1], a[j]];
+                        }
+                    }
+                }
+                return a;
+            }
+
+            function selectionSort(arr) {
+                let a = [...arr];
+                let n = a.length;
+                for (let i = 0; i < n-1; i++) {
+                    let minIdx = i;
+                    for (let j = i+1; j < n; j++) {
+                        if (a[j] < a[minIdx]) minIdx = j;
+                    }
+                    if (minIdx !== i) [a[i], a[minIdx]] = [a[minIdx], a[i]];
+                }
+                return a;
+            }
+
+            function runSortAndTime(sortFn, arr) {
+                let start = performance.now();
+                let sorted = sortFn(arr);
+                let end = performance.now();
+                return { time: (end - start).toFixed(2), sorted };
+            }
+
+            function updateSortDisplay() {
+                sortInfo.innerText = `случайный массив из ${currentArray.length} элементов (первые 5: ${currentArray.slice(0,5).join(', ')}…)`;
+            }
+
+            function runBubble() {
+                if (!currentArray.length) currentArray = generateRandomArray();
+                let { time } = runSortAndTime(bubbleSort, currentArray);
+                bubbleTimeDiv.innerText = `⏱️ пузырёк: ${time} мс`;
+            }
+            function runSelection() {
+                if (!currentArray.length) currentArray = generateRandomArray();
+                let { time } = runSortAndTime(selectionSort, currentArray);
+                selectionTimeDiv.innerText = `⏱️ выбор: ${time} мс`;
+            }
+
+            bubbleBtn.addEventListener('click', runBubble);
+            selectionBtn.addEventListener('click', runSelection);
+            genArrayBtn.addEventListener('click', () => {
+                currentArray = generateRandomArray(1000);
+                updateSortDisplay();
+                bubbleTimeDiv.innerText = '⏱️ пузырёк: —';
+                selectionTimeDiv.innerText = '⏱️ выбор: —';
+            });
+
+            // initial array
+            currentArray = generateRandomArray(1000);
+            updateSortDisplay();
+
+            // дополнительные мелочи: если меняют ввод суммы, можно и не трогать
+        })();
+    </script>
+</body>
+</html>
+ 
+ 
